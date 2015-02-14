@@ -1,0 +1,31 @@
+#!/bin/bash
+set -e
+
+if [ "$#" -lt 2 ]; then
+	echo "Usage: iterate PATTERN N"
+	echo "Iterates the given pattern n times, keeping the intermediate images"
+	exit 1
+fi
+
+pattern="$1"
+outdir="${pattern}.out"
+
+# make the output directory, which will contain a bunch of PGM files for each
+# step
+mkdir -p "$outdir"
+
+# size up the input pattern
+height=$(wc -l "$pattern")
+width=$(head -n 1 "$pattern" | wc -c)
+# don't count the trailing newline
+width=$(($width - 1))
+
+i=0
+cp "$pattern" "${outdir}/0.life"
+./drawlife $width $height < "${outdir}/0.life" > "${outdir}/0.pgm"
+while [ "$i" -le "$2" ]; do
+	next=$(($i + 1))
+	./life $width $height < "${outdir}/${i}.life" > "${outdir}/${next}.life"
+	./drawlife $width $height < "${outdir}/${next}.life" > "${outdir}/${next}.pgm"
+	i=$next
+done
