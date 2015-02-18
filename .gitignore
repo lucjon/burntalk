@@ -1,3 +1,13 @@
 life
 drawlife
 *.o
+*.aux
+*.log
+*.nav
+*.out
+*.pdf
+*.snm
+*.toc
+*.pgm
+*.eps
+*.out/*

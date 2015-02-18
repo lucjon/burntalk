@@ -1,0 +1,61 @@
+\documentclass{beamer}
+
+\usepackage{graphicx}
+\usepackage{pgffor}
+
+\graphicspath{{./figures/}}
+
+% \imseq{preceding text}{sequence name}{count}
+\newcommand{\imseq}[3]{%
+	\begin{center}%
+	\foreach \n [count=\sliden] in {0,...,#3}{%
+		\only<\sliden>{%
+			#1%
+			\includegraphics[height=0.8\textheight,width=0.8\textwidth,keepaspectratio]{#2-\n.eps}%
+		}%
+	}%
+	\end{center}
+}
+% \game{sequence name}{count}
+\newcommand{\game}[2]{\imseq{Turn \n\\\medskip}{#1}{#2}}
+
+\title{Computation in the game of Life}
+\author{L. Jones}
+
+\begin{document}
+
+\maketitle
+
+\begin{frame}{The game of Life}{The rules}
+	\begin{itemize}
+		\item A zero-player game played on an infinite 2-D grid of squares
+		\item Every square starts off either alive or dead
+		\item A square only stays alive if exactly 2 or 3 of its neighbours are alive
+		\item A dead square is revived if exactly 3 of its neighbours are alive
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{The game of Life}{An example}
+	\game{game1}{4}
+\end{frame}
+
+\begin{frame}{The game of Life}
+	\begin{itemize}
+		\item Invented by John H. Conway in the 1960s
+		\item Popularised by Martin Gardner in Scientific American
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{Some special patterns}{Still lifes}
+	\game{still1}{3}
+\end{frame}
+
+\begin{frame}{Some special patterns}{Still lifes}
+	\game{beehive}{3}
+\end{frame}
+
+\begin{frame}{Some special patterns}{Blinkers}
+	\game{blinker}{4}
+\end{frame}
+
+\end{document}

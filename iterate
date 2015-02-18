@@ -9,6 +9,9 @@ fi
 
 pattern="$1"
 outdir="${pattern}.out"
+progdir="${progdir:=.}"
+life="${life:-$progdir/life}"
+drawlife="${drawlife:-$progdir/drawlife}"
 
 # make the output directory, which will contain a bunch of PGM files for each
 # step
@@ -22,10 +25,10 @@ width=$(($width - 1))
 
 i=0
 cp "$pattern" "${outdir}/0.life"
-./drawlife $width $height < "${outdir}/0.life" > "${outdir}/0.pgm"
+"$drawlife" $width $height < "${outdir}/0.life" > "${outdir}/0.pgm"
 while [ "$i" -le "$2" ]; do
 	next=$(($i + 1))
-	./life $width $height < "${outdir}/${i}.life" > "${outdir}/${next}.life"
-	./drawlife $width $height < "${outdir}/${next}.life" > "${outdir}/${next}.pgm"
+	"$life" $width $height < "${outdir}/${i}.life" > "${outdir}/${next}.life"
+	"$drawlife" $width $height < "${outdir}/${next}.life" > "${outdir}/${next}.pgm"
 	i=$next
 done

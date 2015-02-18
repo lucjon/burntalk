@@ -1,0 +1,14 @@
+#!/bin/bash
+# Usage: mkfigure PATTERN_NAME N
+# Make a figure from a pattern
+set -e
+
+export progdir=..
+cd ../patterns/
+../iterate $1 $2
+cd ../talk/figures
+find ../../patterns/$1.out/ -name \*.pgm | while read fn; do
+	name="$(basename $fn | cut -d. -f1)"
+	echo $fn '->' $name
+	pnmtops -noturn $fn > "$1-${name}.eps"
+done
