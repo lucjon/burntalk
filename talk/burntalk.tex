@@ -17,7 +17,7 @@
 	\end{center}
 }
 % \game{sequence name}{count}
-\newcommand{\game}[2]{\imseq{Turn \n\\\medskip}{#1}{#2}}
+\newcommand{\game}[2]{\imseq{Turn \sliden\\\medskip}{#1}{#2}}
 
 \title{Computation in the game of Life}
 \author{L. Jones}
@@ -46,16 +46,31 @@
 	\end{itemize}
 \end{frame}
 
-\begin{frame}{Some special patterns}{Still lifes}
+\begin{frame}{The game of Life}
+	\begin{itemize}
+		\item From these simple rules, complicated and unpredictable behaviour arises
+		\item We can make sense of the behaviour by looking at individual stable patterns
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{Some stable patterns}{Still lifes}
 	\game{still1}{3}
+	Still lives have period 1.
 \end{frame}
 
-\begin{frame}{Some special patterns}{Still lifes}
+\begin{frame}{Some stable patterns}{Still lifes}
 	\game{beehive}{3}
+	Still lives have period 1.
 \end{frame}
 
-\begin{frame}{Some special patterns}{Blinkers}
-	\game{blinker}{4}
+\begin{frame}{Some stable patterns}{Blinkers}
+	\game{blinker}{3}
+	This blinker has period 2.
+\end{frame}
+
+\begin{frame}{More complex behaviour}{Gliders}
+	\game{glider}{8}
+	The glider shape has period 4, but moves from its original position.
 \end{frame}
 
 \end{document}
