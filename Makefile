@@ -2,7 +2,10 @@ CFLAGS := -O3 -Wall -Wextra
 OBJECTS := game.o
 BINS := life drawlife
 
-all: $(BINS)
+all: $(BINS) talk
+
+talk:
+	$(MAKE) -C talk
 
 game.o: game.c
 	$(CC) -c $(CFLAGS) -o $@ $^
@@ -12,5 +15,6 @@ game.o: game.c
 
 clean:
 	rm -f $(OBJECTS) $(BINS)
+	$(MAKE) -C talk clean
 
-.PHONY: all
+.PHONY: all talk
