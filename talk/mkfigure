@@ -19,4 +19,5 @@ find ../../patterns/${patname}.out/ -name \*.pgm | while read fn; do
 	pnmtops -noturn $fn > "${patname}-${name}.eps"
 done
 
+rm -rf ../../patterns/${patname}.out/
 touch "${patname}.$n"
