@@ -1,14 +1,22 @@
 #!/bin/bash
 # Usage: mkfigure PATTERN_NAME N
+#    or: mkfigure PATTERN_NAME.N
 # Make a figure from a pattern
 set -e
 
+mkdir -pv figures
+
+patname="$(echo -n $1 | cut -d. -f1)"
+n="${2:-$(echo -n $1 | cut -d. -f2)}"
+
 export progdir=..
 cd ../patterns/
-../iterate $1 $2
-cd ../talk/figures
-find ../../patterns/$1.out/ -name \*.pgm | while read fn; do
+../iterate $patname $n
+cd ../talk/patfigs
+find ../../patterns/${patname}.out/ -name \*.pgm | while read fn; do
 	name="$(basename $fn | cut -d. -f1)"
 	echo $fn '->' $name
-	pnmtops -noturn $fn > "$1-${name}.eps"
+	pnmtops -noturn $fn > "${patname}-${name}.eps"
 done
+
+touch "${patname}.$n"

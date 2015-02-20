@@ -11,3 +11,4 @@ drawlife
 *.pgm
 *.eps
 *.out/*
+talk/patfigs/*
