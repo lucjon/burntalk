@@ -5,6 +5,7 @@
 int main(int argc, char *argv[]) {
 	int w, h;
 	game g;
+	colour state_colours[] = {32, 64, 96, 164};
 
 	if (argc < 3) {
 		printf( "usage: %s W H\n"
@@ -19,7 +20,7 @@ int main(int argc, char *argv[]) {
 
 	new_game(&g, w, h, RULES_LIFE);
 	read_board(&g, stdin);
-	draw_current_state(&g, (graphics_format) {PPM, 32, 32, 2, 2, 0, 255, 128}, stdout);
+	draw_current_state(&g, (graphics_format) {PPM, 32, 32, 2, 4, 2, 0, 255, 128, state_colours}, stdout);
 	destroy_game(&g);
 
 	return 0;

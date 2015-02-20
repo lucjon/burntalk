@@ -25,11 +25,14 @@ typedef struct {
 	int cell_width,
 		cell_height,
 		grid_thickness,
+		/* set to 0 not to use different colours for different cell values */
+		colour_count,
 		/* for making the grid lines dashed; put to 1 for solid lines */
 		grid_skip;
 	colour on_colour,
 		   off_colour,
-		   grid_colour;
+		   grid_colour,
+		   *state_colours;
 } graphics_format;
 
 void new_game(game *g, int w, int h, ruleset rules);

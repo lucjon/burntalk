@@ -6,8 +6,13 @@
 
 /* standard Life is B3/S23 */
 ruleset RULES_LIFE = {
-	{0, 0, 0, 1, 0, 0, 0, 0, 0},
-	{0, 0, 1, 1, 0, 0, 0, 0, 0}
+	.B = {0, 0, 0, 1, 0, 0, 0, 0, 0},
+	.S = {0, 0, 1, 1, 0, 0, 0, 0, 0}
+};
+
+#define COLOUR_TABLE_ENTRIES 4
+char colour_table[] = {
+	'.', '*', '#', '!'
 };
 
 void new_game(game *g, int w, int h, ruleset rules) {
@@ -47,6 +52,7 @@ void next_turn(game *g) {
 void draw_current_state(game *g, graphics_format fmt, FILE *out) {
 	int col, line, x, y, w, h;
 	colour value;
+	cell state;
 
 	w = g->w * (fmt.cell_width + fmt.grid_thickness) - fmt.grid_thickness;
 	h = g->h * (fmt.cell_height + fmt.grid_thickness) - fmt.grid_thickness;
@@ -63,7 +69,14 @@ void draw_current_state(game *g, graphics_format fmt, FILE *out) {
 				/* fill in (cell_width) solid pixels corresponding to the value
 				 * of the cell */
 				for (x = 0; x < fmt.cell_width; x++) {
-					value = (g->board[g->w * line + col]) ? fmt.on_colour : fmt.off_colour;
+					state = g->board[g->w * line + col];
+					if (!state)
+						value = fmt.off_colour;
+					else if (fmt.colour_count > 0 && state < fmt.colour_count)
+						value = fmt.state_colours[state];
+					else
+						value = fmt.on_colour;
+
 					fprintf(out, "%d ", value);
 				}
 
@@ -95,11 +108,24 @@ void draw_current_state(game *g, graphics_format fmt, FILE *out) {
 }
 
 void read_board(game *g, FILE *in) {
-	int x, y;
+	int x, y, i, succeeded;
+	char c;
 
 	for (y = 0; y < g->h; y++) {
 		for (x = 0; x < g->w; x++) {
-			g->board[y * g->w + x] = getc(in) != EMPTY_CHAR;
+			c = getc(in);
+			succeeded = 0;
+
+			for (i = 0; i < COLOUR_TABLE_ENTRIES; i++) {
+				if (colour_table[i] == c) {
+					g->board[y * g->w + x] = i;
+					succeeded = 1;
+					break;
+				}
+			}
+
+			if (!succeeded)
+				g->board[y * g->w + x] = c != EMPTY_CHAR;
 		}
 		assert(getc(in) == '\n');
 	}
@@ -107,10 +133,16 @@ void read_board(game *g, FILE *in) {
 
 void print_current_state(game *g, FILE *out) {
 	int x, y;
+	cell state;
 
 	for (y = 0; y < g->h; y++) {
 		for (x = 0; x < g->w; x++) {
-			putc(g->board[y * g->w + x] ? FULL_CHAR : EMPTY_CHAR, out);
+			state = g->board[y * g->w + x];
+
+			if (state < COLOUR_TABLE_ENTRIES)
+				putc(colour_table[state], out);
+			else
+				putc(state ? FULL_CHAR : EMPTY_CHAR, out);
 		}
 		putc('\n', out);
 	}
