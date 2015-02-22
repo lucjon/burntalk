@@ -1,31 +1,43 @@
 \documentclass{beamer}
 
+\usepackage{tikz}
 \usepackage{graphicx}
 \usepackage{pgffor}
+\usepackage{xspace}
+\usepackage{comment}
 
 \graphicspath{{./figures/} {./patfigs/}}
 
 % \imseq{preceding text}{sequence name}{sequence}
+\newcounter{turncnt}
+\newcommand{\theturn}{\arabic{turncnt}}
 \newcommand{\imseq}[3]{%
-	\begin{center}%
 	\foreach \n [count=\sliden] in {#3}{%
+		\setcounter{turncnt}{\n}%
+		\addtocounter{turncnt}{1}%
 		\only<\sliden>{%
-			#1%
-			\includegraphics[height=0.6\textheight,width=0.8\textwidth,keepaspectratio]{#2-\n.eps}%
+		\centering%
+		#1%
+		\parbox[t][0.6\paperheight][c]{\textwidth}{%
+			\begin{center}%
+				\includegraphics[height=0.6\textheight,width=0.8\textwidth,keepaspectratio]{#2-\n.eps}%
+			\end{center}
+			}%
 		}%
 	}%
-	\end{center}
 }
 % \countseq{preceding text}{sequence name}{count}
 \newcommand{\countseq}[3]{\imseq{#1}{#2}{0,...,#3}}
 % \gametext
-\newcommand{\gametext}{Turn \sliden\\\medskip}
+\newcommand{\gametext}{Turn \theturn\\\medskip}
 % \game{sequence name}{count}
 \newcommand{\game}[2]{\countseq{\gametext}{#1}{#2}}
 % \on
-\newcommand{\on}[0]{\textcolor{orange}{\bf on}}
+%\newcommand{\on}[0]{\textcolor{orange}{\bf on}}
+\newcommand{\on}[0]{\textcolor{orange}{\bf 1}\xspace}
 % \off
-\newcommand{\off}[0]{off}
+%\newcommand{\off}[0]{off}
+\newcommand{\off}[0]{0\xspace}
 
 \title{Computation in the game of Life}
 \author{L. Jones}
@@ -44,14 +56,24 @@
 \end{frame}
 
 \begin{frame}{The game of Life}{An example}
-	\game{game1}{4}
+	\begin{columns}[onlytextwidth]
+		\begin{column}{0.3\textwidth}
+			\game{game1}{5}
+		\end{column}
+		\begin{column}{0.3\textwidth}
+			\game{game2}{5}
+		\end{column}
+		\begin{column}{0.3\textwidth}
+			\game{game3}{5}
+		\end{column}
+	\end{columns}
 \end{frame}
 
 \begin{frame}{The game of Life}
-	\begin{itemize}
-		\item Invented by John H. Conway in the 1960s
-		\item Popularised by Martin Gardner in Scientific American
-	\end{itemize}
+%	\begin{itemize}
+%		\item Invented by John H. Conway in 1970
+%		\item Popularised by Martin Gardner in Scientific American
+%	\end{itemize}
 
 	\begin{columns}[onlytextwidth]
 	\begin{column}{0.5\textwidth}
@@ -74,18 +96,13 @@
 	\begin{itemize}
 		\item From these simple rules, complicated and unpredictable behaviour arises
 		\item We can make sense of the behaviour by looking at individual stable patterns
-		\item Our aim will is to build up a pattern sufficiently complicated that it can compute
+		\item Our aim is to build up a pattern sufficiently complicated that it can do `useful' computation
 	\end{itemize}
 \end{frame}
 
 \begin{frame}{Some stable patterns}{Still lifes}
-	\game{still1}{3}
-	Still lives have period 1.
-\end{frame}
-
-\begin{frame}{Some stable patterns}{Still lifes}
-	\game{beehive}{3}
-	Still lives have period 1.
+	\game{still1}{2}
+	Still lifes have period 1.
 \end{frame}
 
 \begin{frame}{Some stable patterns}{Blinkers}
@@ -98,10 +115,17 @@
 	The glider shape has period 4, but moves from its original position.
 \end{frame}
 
+\begin{frame}{More complex behaviour}{Glider versus glider}
+	\game{glidervs}{4}
+	When two gliders collide, they annihilate each other.
+\end{frame}
+
+\begin{comment}
 \begin{frame}{More complex behaviour}{Eaters}
 	\game{eater}{6}
-	The eater is a still life, but destroys a colliding glider in 4 turns.
+	The eater is a still life, and destroys an oncoming glider in 4 turns.
 \end{frame}
+\end{comment}
 
 \begin{frame}{How complex can we go?}
 	\begin{block}{Conjecture (Conway, 1970)}
@@ -109,18 +133,20 @@
 	\end{block}
 	\medskip
 
-	\pause
-	\begin{itemize}
-		\item Disproved shortly afterwards
-		\item In fact, a much more interesting result is true
-	\end{itemize}
+%	\pause
+%	\begin{itemize}
+%		\item Disproved shortly afterwards by Gosper (1970)
+%		\item In fact, a much more interesting result was later shown by Conway himself (1982)
+%	\end{itemize}
 \end{frame}
 
-\begin{frame}{More complex behaviour}{Glider guns}
-	\imseq{Turn \n\\\medskip}{gosper}{0,3,6,...,42,45}
+\begin{frame}{How complex can we go?}{Gosper's counterexample}
+	\imseq{Turn \theturn\\\medskip}{gosper}{0,2,5,...,42,44}
+	The Gosper glider gun has period 30, producing a glider on turn 15 in each cycle.
 \end{frame}
 
 \begin{frame}{How complex can we go?}
+	\pause
 	\begin{block}{Theorem}
 		Life is Turing-complete.
 	\end{block}
@@ -135,17 +161,18 @@
 	\end{block}
 \end{frame}
 
-\begin{frame}{Logic gates}
-	\begin{itemize}
-		\item Many ways of modelling computation in Life have been discovered
-		\item Modern digital computer chips are built from billions of logic gates
-		\item Constructing logic gates in Life will give us a means to compute things
-	\end{itemize}
-\end{frame}
+%\begin{frame}{Logic gates}
+%	\begin{itemize}
+%		\item Many ways of modelling computation in Life have been discovered
+%		\item Modern digital computer chips are built from billions of logic gates
+%		\item Constructing logic gates in Life will give us a means to compute things
+%	\end{itemize}
+%\end{frame}
 
 \begin{frame}{Logic gates}{NOT, AND and OR}
+	\pause
 	\begin{itemize}
-		\item Boolean functions operate on two values: on and off
+		\item Boolean functions operate on two values: \on and \off
 		\item The most common gates are $\mathsf{NOT}$, $\mathsf{AND}$ and $\mathsf{OR}$
 	\end{itemize}
 
@@ -186,13 +213,15 @@
 		\end{column}
 	\end{columns}
 
-	\pause
-	\medskip
-	\begin{itemize}
-		\item Any Boolean function can be expressed as a combination of these gates
-	\end{itemize}
+%	\pause
+%	\medskip
+%	\begin{itemize}
+%		\item Any Boolean function can be expressed as a combination of these gates
+%		\item We can do binary arithmetic with Boolean functions
+%	\end{itemize}
 \end{frame}
 
+\begin{comment}
 \begin{frame}{Logic gates}{NAND}
 	\begin{itemize}
 		\item If we glue together an AND gate and then a NOT gate, we get a NAND gate
@@ -211,21 +240,84 @@
 
 	\pause
 	\begin{itemize}
-		\item It turns out any Boolean function can be expressed as a combination of NANDs
-		\item Even binary arithmetic can be done using Boolean functions
+		\item It turns out any Boolean function can also be expressed as a combination of NANDs
 	\end{itemize}
 \end{frame}
 
-\begin{frame}{Bringing NAND gates to Life}
+\begin{frame}{Bringing gates to Life}
 	\begin{itemize}
 		\item Build a `circuit' where gliders act like electrons carrying current
 		\item Just like in a real circuit, gliders present represents \on; no glider means \off
 		\item We use glider guns as current sources
-		\item To represent \off{} at a particular point, we use a stopper pattern to destroy the glider
+		\item We can use interactions with other patterns (such as eaters) to selectively destroy gliders and produce \off{}s
 	\end{itemize}
 \end{frame}
+\end{comment}
 
-\begin{frame}
+\begin{frame}{Bringing gates to Life}{Encoding input}
+	\begin{columns}%[onlytextwidth]
+	\begin{column}{0.7\textwidth}
+		\begin{itemize}
+			\item We encode a series of bits as a line of gliders
+			\item A glider represents \on
+			\item We leave a space to represent \off
+			\item Timing must be perfect: a glider moves 1 cell every 4 turns
+		\end{itemize}
+	\end{column}
+
+	\begin{column}{0.4\textwidth}
+		\begin{center}
+			\includegraphics[width=\textwidth,height=\textheight,keepaspectratio]{bitstream-0} \\
+			The bit stream '\on~\on~\off~\on'
+		\end{center}
+	\end{column}
+	\end{columns}
+\end{frame}
+
+\begin{frame}[t]{Bringing gates to Life}{The NOT gate}
+	\begin{itemize}
+		\item A glider gun continually makes gliders aimed so they collide with the input bitstream
+		\item If the current bit is \on, the gliders annihilate each other, producing \off
+		\item If it is \off, the glider from the gun can pass, giving \on
+	\end{itemize}
+
+	\begin{center}
+		\begin{tikzpicture}
+			\draw[->] (-3,2) -- (-0.1,0.5) node[pos=-.2] {Input bit $x$};
+			\draw[->] (1,2.25) -- (1,1.1) node[pos=-.2] {Glider gun};
+			\draw (0,0) rectangle (2, 1) node[pos=.5] {Collision};
+			\draw[->] (1,-0.1) -- (1,-0.75) node[pos=1.5] {NOT $x$};
+		\end{tikzpicture}
+	\end{center}
+\end{frame}
+
+\begin{frame}{Turing-completeness}
+	\begin{columns}
+		\begin{column}{0.3\paperwidth}
+		\begin{itemize}
+			\item Logic gate construction is equivalent to a Turing machine
+			\item However, Rendell (2002) built an `actual' Turing machine pattern in Life
+			\item Grid dimensions are 1,714~$\times$~1,647
+		\end{itemize}
+	\end{column}
+
+	\begin{column}{0.7\paperwidth}
+		\begin{center}
+			\includegraphics[width=\textwidth,height=0.65\textheight,keepaspectratio]{rendell-tm}
+		\end{center}
+	\end{column}
+	\end{columns}
+\end{frame}
+
+\begin{frame}{Variations on a theme}
+	\begin{itemize}
+		\item Life is one of a family of games called `cellular automata'
+		\item There are a number of Life-like automata which change the number of neighbours required for a cell to live or die
+% http://arxiv.org/abs/1111.1567
+		\item Rafler (2011) formulated a continuous version of Life
+% http://www.complex-systems.com/pdf/15-1-1.pdf
+		\item Cook (2004) showed that even the 1-dimensional Rule 110 automaton is Turing-complete
+	\end{itemize}
 \end{frame}
 
 \end{document}
