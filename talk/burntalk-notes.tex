@@ -1,0 +1,9 @@
+\documentclass[handout]{beamer}
+\setbeameroption{show only notes}
+\setbeamercolor{note page}{bg=white}
+\setbeamercolor{note title}{bg=white}
+\usepackage{pgfpages}
+\pgfpagesuselayout{resize to}[a4paper,landscape,border shrink=5mm]
+\AtBeginNote{\let\enumerate\itemize%
+\let\endenumerate\enditemize}
+\input{burntalk.tex}

@@ -1,10 +1,10 @@
-\documentclass{beamer}
-
+% note: no \documentclass{} - this file is included from burntalk-*.tex
 \usepackage{tikz}
 \usepackage{graphicx}
 \usepackage{pgffor}
 \usepackage{xspace}
 \usepackage{comment}
+\usepackage[rel]{overpic}
 \usepackage{hyperref}
 
 \graphicspath{{./figures/} {./patfigs/}}
@@ -40,20 +40,87 @@
 %\newcommand{\off}[0]{off}
 \newcommand{\off}[0]{0\xspace}
 
+% \qmark
+\newcommand{\qmark}[0]{{\large ?}}
+% \rqmark
+\newcommand{\rqmark}[0]{\textcolor{white}{\qmark}}
+
 \title{Computation in the game of Life}
-\author{L. Jones}
+\author{Lucas Jones}
+\date{February 25, 2015}
 
 \begin{document}
 
 \maketitle
 
 \begin{frame}{The game of Life}{The rules}
-	\begin{itemize}
-		\item A zero-player game played on an infinite 2-D grid of squares
-		\item Every square starts off either alive or dead
-		\item A square only stays alive if exactly 2 or 3 of its neighbours are alive
-		\item A dead square is revived if exactly 3 of its neighbours are alive
-	\end{itemize}
+	\begin{columns}[onlytextwidth]
+		\begin{column}{0.3\textwidth}
+			\centering
+			\begin{overpic}[width=0.75\textwidth,height=\textheight,keepaspectratio]{rules1-0}
+				\put(26,64){\rqmark}
+				\put(46,64){\rqmark}
+				\put(66,64){\qmark}
+
+				\put(26,44){\qmark}
+				\put(46,44){\textcolor{white}{\bf 4}}
+				\put(66,44){\qmark}
+
+				\put(26,24){\qmark}
+				\put(46,24){\rqmark}
+				\put(66,24){\rqmark}
+			\end{overpic}
+
+			\medskip
+			{\Large $> 3$\\ dies}
+		\end{column}
+		\begin{column}{0.3\textwidth}
+			\centering
+			\begin{overpic}[width=0.75\textwidth,height=\textheight,keepaspectratio]{rules2-0}
+				\put(26,64){\rqmark}
+				\put(46,64){\qmark}
+				\put(66,64){\qmark}
+
+				\put(26,44){\qmark}
+				\put(46,44){\textcolor{white}{\bf 1}}
+				\put(66,44){\qmark}
+
+				\put(26,24){\qmark}
+				\put(46,24){\qmark}
+				\put(66,24){\qmark}
+			\end{overpic}
+
+			\medskip
+			{\Large $< 2$\\ dies}
+		\end{column}
+		\begin{column}{0.3\textwidth}
+			\centering
+			\begin{overpic}[width=0.75\textwidth,height=\textheight,keepaspectratio]{rules3-0}
+				\put(26,64){\rqmark}
+				\put(46,64){\rqmark}
+				\put(66,64){\qmark}
+
+				\put(26,44){\qmark}
+				\put(46,44){\bf 3}
+				\put(66,44){\qmark}
+
+				\put(26,24){\qmark}
+				\put(46,24){\qmark}
+				\put(66,24){\rqmark}
+			\end{overpic}
+
+			\medskip
+			{\Large $= 3$\\ is born}
+		\end{column}
+	\end{columns}
+
+	\note[item]{A bit different from other games you've played; invented by John Horton Conway in 1970}
+	\note[item]{A zero-player game played on an infinite 2-D grid of squares}
+	\note[item]{Every square starts off either alive or dead}
+	\note[item]{At start of turn: go through living cells; count neighbours}
+	\note[item]{If less than 2, die of isolation}
+	\note[item]{If living and greater than 3, die of overcrowding}
+	\note[item]{Then dead cells: if 3 live neighbours, born}
 \end{frame}
 
 \begin{frame}{The game of Life}{An example}
@@ -68,6 +135,11 @@
 			\countseq{}{game3}{5}
 		\end{column}
 	\end{columns}
+
+	\note[item]{From these simple rules, complicated and unpredictable behaviour arises}
+	\note[item]{We can make sense of the behaviour by looking at individual stable patterns}
+	\note[item]{Our aim is to build up a pattern sufficiently complicated that it can do `useful' computation}
+	\note[item]{Going to look at some of these small, stable patterns}
 \end{frame}
 
 \begin{comment}
@@ -95,14 +167,6 @@
 \end{frame}
 \end{comment}
 
-\begin{frame}{The game of Life}
-	\begin{itemize}
-		\item From these simple rules, complicated and unpredictable behaviour arises
-		\item We can make sense of the behaviour by looking at individual stable patterns
-		\item Our aim is to build up a pattern sufficiently complicated that it can do `useful' computation
-	\end{itemize}
-\end{frame}
-
 \begin{frame}{Some stable patterns}{Still lifes}
 	\game{still1}{2}
 	Still lifes have period 1.
@@ -114,18 +178,13 @@
 \end{frame}
 
 \begin{frame}{More complex behaviour}{Gliders}
-	\game{glider}{8}
+	\game{glider}{4}
 	The glider shape has period 4, but moves from its original position.
 \end{frame}
 
 \begin{frame}{More complex behaviour}{Glider versus glider}
 	\game{glidervs}{4}
 	When two gliders collide, they annihilate each other.
-\end{frame}
-
-\begin{frame}{More complex behaviour}{Eaters}
-	\game{eater}{6}
-	The eater is a still life, and destroys an oncoming glider in 4 turns.
 \end{frame}
 
 \begin{comment}
@@ -146,8 +205,13 @@
 
 % best source I can find for date: http://gosper.org/bill.html
 \begin{frame}{How complex can we go?}{Unbounded growth: Gosper's glider gun}
-	\imseq{Turn \theturn\\\medskip}{gosper}{0,3,...,42,45}
-	The Gosper glider gun has period 30, producing a glider on the 15th turn in each cycle.
+	\imseq{\gametext}{gosper}{0,3,...,42,45}
+	The glider gun has period 30, shooting out a glider every cycle.
+
+	\note[item]{Complicated looking thing; discovered by Bill Gosper in 1970}
+	\note[item]{Run it through 3 turns at a time; spot the glider on cycle 15}
+	\note[item]{As we go through a few, see glider will escape unscathed}
+	\note[item]{Getting to another period --- 30 cyles --- we get 2 gliders}
 \end{frame}
 
 \begin{frame}{How complex can we go?}
@@ -176,12 +240,11 @@
 %\end{frame}
 
 \begin{frame}{Logic gates}
-	\pause
-	\begin{itemize}
-		\item Boolean functions operate on two values: \on and \off
-		\item Can express all such functions as combinations of $\mathsf{NOT}$ and $\mathsf{AND}$ 
-	\end{itemize}
+	\note[item]{Going to use the same logic gate construction Conway used}
+	\note[item]{Boolean functions operate on two values: \on and \off}
+	\note[item]{Can express all such functions as combinations of $\mathsf{NOT}$ and $\mathsf{AND}$}
 
+	\pause
 	\bigskip
 	\begin{columns}[onlytextwidth]
 		\begin{column}{0.5\textwidth}
@@ -249,31 +312,25 @@
 \end{comment}
 
 \begin{frame}{Bringing gates to Life}{Encoding input}
-	\begin{columns}%[onlytextwidth]
-	\begin{column}{0.7\textwidth}
-		\begin{itemize}
-			\item We encode a series of bits as a line of gliders
-			\item A glider represents \on
-			\item We leave a space to represent \off
-			\item Timing must be perfect: a glider moves 1 cell every 4 turns
-		\end{itemize}
-	\end{column}
+	\note[item]{We encode a series of bits as a line of gliders}
+	\note[item]{A glider represents \on}
+	\note[item]{We leave a space to represent \off}
+	\note[item]{Timing must be perfect: a glider moves 1 cell every 4 turns}
 
-	\begin{column}{0.4\textwidth}
-		\begin{center}
-			\includegraphics[width=\textwidth,height=\textheight,keepaspectratio]{bitstream-0} \\
-			The bit stream '\on~\on~\off~\on'
-		\end{center}
-	\end{column}
-	\end{columns}
+	\begin{center}
+		\begin{overpic}[height=0.75\textheight,keepaspectratio]{bitstream-0}
+			\put(11.5,82){\Huge \on}
+			\put(29,58){\Huge \on}
+			\put(47,34){\Huge \off}
+			\put(64.5,11){\Huge \on}
+		\end{overpic}
+	\end{center}
 \end{frame}
 
-\begin{frame}[t]{Bringing gates to Life}{The NOT gate}
-	\begin{itemize}
-		\item A glider gun continually makes gliders aimed so they collide with the input bitstream
-		\item If the current bit is \on, the gliders annihilate each other, producing \off
-		\item If it is \off, the glider from the gun can pass, giving \on
-	\end{itemize}
+\begin{frame}{Bringing gates to Life}{The NOT gate}
+	\note[item]{A glider gun continually makes gliders aimed so they collide with the input bitstream}
+	\note[item]{If the current bit is \on, the gliders annihilate each other, producing \off}
+	\note[item]{If it is \off, the glider from the gun can pass, giving \on}
 
 	\begin{center}
 		\begin{tikzpicture}
@@ -286,64 +343,43 @@
 \end{frame}
 
 \begin{frame}[t]{Bringing gates to Life}{The AND gate}
-	\begin{columns}
-	\begin{column}{0.5\paperwidth}
-		\begin{itemize}
-			\item Collide both bitstreams in sequence
-			\item If both are \on, the \on from input $x$ consumes the gun glider leaving $y$ free to be output
-			\item If only one is \on, it will consume the gun glider leaving no gliders left as output
-			\item If both are \off, the gun glider keeps moving in the wrong direction, where it is tidied up by an eater
-		\end{itemize}
-	\end{column}
+	\note[item]{Collide both bitstreams in sequence}
+	\note[item]{If both are \on, the \on from input $x$ consumes the gun glider leaving $y$ free to be output}
+	\note[item]{If only one is \on, it will consume the gun glider leaving no gliders left as output}
+	\note[item]{If both are \off, the gun glider keeps moving in the wrong direction, where it is tidied up by an eater}
 
-	\begin{column}{0.5\paperwidth}
-		\begin{center}
-			\begin{tikzpicture}
-				\draw[->,thick] (-1.25,2) -- (-0.1,0.5) node[pos=-.2] {Glider gun};
-				\draw[->,thick] (2.75,2) -- (2.1,0.5) node[pos=-.2] {$x$};
-				\draw (0,0) rectangle (2, 1) node[pos=.5] {Collision};
-				\draw[->,thick] (1,-0.1) -- (1,-0.75);
-				\draw[->,thick] (2.75,0) -- (2.1,-1.5) node[pos=-.2] {$y$};
-				\draw (0,-0.9) rectangle (2, -2) node[pos=.5] {Collision};
-				\draw[->,thick] (1,-2.1) -- (1.4,-2.75);
-				\draw[dashed] (0.5,-2.9) rectangle (2.5, -4) node[pos=.5] {Eater};
-				\draw[<-,thick] (-1.25,-3) -- (-0.1,-1.5) node[pos=-.2] {$x$ AND $y$};
-			\end{tikzpicture}
-		\end{center}
-	\end{column}
-	\end{columns}
+	\begin{center}
+		\begin{tikzpicture}
+			\draw[->,thick] (-1.25,2) -- (-0.1,0.5) node[pos=-.2] {Glider gun};
+			\draw[->,thick] (3.25,2) -- (2.1,0.5) node[pos=-.2] {$x$};
+			\draw (0,0) rectangle (2, 1) node[pos=.5] {Collision};
+			\draw[->,thick] (1,-0.1) -- (1,-0.75);
+			\draw[->,thick] (3.25,0) -- (2.1,-1.5) node[pos=-.2] {$y$};
+			\draw (0,-0.9) rectangle (2, -2) node[pos=.5] {Collision};
+			\draw[<-,thick] (-1.25,-3) -- (-0.1,-1.5) node[pos=-.2] {$x$ AND $y$};
+		\end{tikzpicture}
+	\end{center}
+
+	\note[item]{We can embed any finite logic circuit in Life (e.g. a CPU)}
+	\note[item]{Can represent the transition function of a Turing machine in this way}
+	\note[item]{A combination of gliders and still lifes can act as memory}
+	\note[item]{With some machinery, we then have a full Turing machine}
 \end{frame}
 
 \begin{frame}{Turing-completeness}
-	\begin{itemize}
-		\item We can embed any finite logic circuit in Life
-			\begin{itemize}
-				\item For example, a computer CPU
-			\end{itemize}
-		\item Can represent the transition function of a Turing machine in this way
-		\item A combination of gliders and still lifes can act as memory
-		\item With some machinery, we then have a full Turing machine
-	\end{itemize}
-\end{frame}
-
-\begin{frame}{Turing-completeness}
-	\begin{columns}
-		\begin{column}{0.3\paperwidth}
-		\begin{itemize}
 % http://rendell-attic.org/gol/tm.htm
-			\item Rendell (2000) built an `actual' Turing machine pattern in Life
-			\item Grid dimensions are 1,714~$\times$~1,647
+	\note[item]{Rendell (2000) built an `actual' Turing machine pattern in Life}
+	\note[item]{Grid dimensions are 1,714~$\times$~1,647}
 % http://rendell-attic.org/gol/utm/index.htm
-			\item Rendell later (2010) built a Universal Turing Machine
-		\end{itemize}
-	\end{column}
+	\note[item]{Rendell later (2010) built a Universal Turing Machine}
 
-	\begin{column}{0.7\paperwidth}
-		\begin{center}
-			\includegraphics[width=\textwidth,height=0.65\textheight,keepaspectratio]{rendell-tm}
-		\end{center}
-	\end{column}
-	\end{columns}
+	\begin{center}
+		\includegraphics[width=\textwidth,height=0.65\textheight,keepaspectratio]{rendell-tm}
+
+		\medskip
+		Rendell's Turing machine \\
+		1,714~$\times$~$1,647$
+	\end{center}
 \end{frame}
 
 \begin{comment}
