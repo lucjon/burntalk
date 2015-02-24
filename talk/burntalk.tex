@@ -5,6 +5,7 @@
 \usepackage{pgffor}
 \usepackage{xspace}
 \usepackage{comment}
+\usepackage{hyperref}
 
 \graphicspath{{./figures/} {./patfigs/}}
 
@@ -58,17 +59,18 @@
 \begin{frame}{The game of Life}{An example}
 	\begin{columns}[onlytextwidth]
 		\begin{column}{0.3\textwidth}
-			\game{game1}{5}
+			\countseq{}{game1}{5}
 		\end{column}
 		\begin{column}{0.3\textwidth}
-			\game{game2}{5}
+			\countseq{}{game2}{5}
 		\end{column}
 		\begin{column}{0.3\textwidth}
-			\game{game3}{5}
+			\countseq{}{game3}{5}
 		\end{column}
 	\end{columns}
 \end{frame}
 
+\begin{comment}
 \begin{frame}{The game of Life}
 %	\begin{itemize}
 %		\item Invented by John H. Conway in 1970
@@ -91,6 +93,7 @@
 	\end{column}
 	\end{columns}
 \end{frame}
+\end{comment}
 
 \begin{frame}{The game of Life}
 	\begin{itemize}
@@ -120,16 +123,16 @@
 	When two gliders collide, they annihilate each other.
 \end{frame}
 
-\begin{comment}
 \begin{frame}{More complex behaviour}{Eaters}
 	\game{eater}{6}
 	The eater is a still life, and destroys an oncoming glider in 4 turns.
 \end{frame}
-\end{comment}
 
+\begin{comment}
 \begin{frame}{How complex can we go?}
+% http://ddi.cs.uni-potsdam.de/HyFISCH/Produzieren/lis_projekt/proj_gamelife/ConwayScientificAmerican.htm
 	\begin{block}{Conjecture (Conway, 1970)}
-		There does not exist an initial configuration such that the number of live cells after $n$ turns goes off to infinity.
+		There does not exist a finite initial configuration such that the number of live cells after $n$ turns goes off to infinity.
 	\end{block}
 	\medskip
 
@@ -139,14 +142,17 @@
 %		\item In fact, a much more interesting result was later shown by Conway himself (1982)
 %	\end{itemize}
 \end{frame}
+\end{comment}
 
-\begin{frame}{How complex can we go?}{Gosper's counterexample}
-	\imseq{Turn \theturn\\\medskip}{gosper}{0,2,5,...,42,44}
-	The Gosper glider gun has period 30, producing a glider on turn 15 in each cycle.
+% best source I can find for date: http://gosper.org/bill.html
+\begin{frame}{How complex can we go?}{Unbounded growth: Gosper's glider gun}
+	\imseq{Turn \theturn\\\medskip}{gosper}{0,3,...,42,45}
+	The Gosper glider gun has period 30, producing a glider on the 15th turn in each cycle.
 \end{frame}
 
 \begin{frame}{How complex can we go?}
 	\pause
+% see Rendell (2014)
 	\begin{block}{Theorem}
 		Life is Turing-complete.
 	\end{block}
@@ -169,16 +175,16 @@
 %	\end{itemize}
 %\end{frame}
 
-\begin{frame}{Logic gates}{NOT, AND and OR}
+\begin{frame}{Logic gates}
 	\pause
 	\begin{itemize}
 		\item Boolean functions operate on two values: \on and \off
-		\item The most common gates are $\mathsf{NOT}$, $\mathsf{AND}$ and $\mathsf{OR}$
+		\item Can express all such functions as combinations of $\mathsf{NOT}$ and $\mathsf{AND}$ 
 	\end{itemize}
 
 	\bigskip
 	\begin{columns}[onlytextwidth]
-		\begin{column}{0.2\textwidth}
+		\begin{column}{0.5\textwidth}
 			\centering
 			\begin{tabular}{c|c}
 				$a$ & $\mathsf{NOT}~ a$ \\
@@ -188,7 +194,7 @@
 			\end{tabular}
 		\end{column}
 
-		\begin{column}{0.3\textwidth}
+		\begin{column}{0.5\textwidth}
 			\centering
 			\begin{tabular}{c|c|c}
 				$a$ & $b$ & $a ~\mathsf{AND}~ b$ \\
@@ -196,18 +202,6 @@
 				\on & \on & \on \\
 				\on & \off & \off \\
 				\off & \on & \off \\
-				\off & \off & \off
-			\end{tabular}
-		\end{column}
-
-		\begin{column}{0.3\textwidth}
-			\centering
-			\begin{tabular}{c|c|c}
-				$a$ & $b$ & $a ~\mathsf{OR}~ b$ \\
-				\hline
-				\on & \on & \on \\
-				\on & \off & \on \\
-				\off & \on & \on \\
 				\off & \off & \off
 			\end{tabular}
 		\end{column}
@@ -283,21 +277,64 @@
 
 	\begin{center}
 		\begin{tikzpicture}
-			\draw[->] (-3,2) -- (-0.1,0.5) node[pos=-.2] {Input bit $x$};
-			\draw[->] (1,2.25) -- (1,1.1) node[pos=-.2] {Glider gun};
+			\draw[->,thick] (-2,2) -- (-0.1,0.5) node[pos=-.2] {Glider gun};
+			\draw[->,thick] (4,2) -- (2.1,0.5) node[pos=-.2] {Input bit $x$};
 			\draw (0,0) rectangle (2, 1) node[pos=.5] {Collision};
-			\draw[->] (1,-0.1) -- (1,-0.75) node[pos=1.5] {NOT $x$};
+			\draw[->,thick] (1,-0.1) -- (1,-0.75) node[pos=1.5] {NOT $x$};
 		\end{tikzpicture}
 	\end{center}
+\end{frame}
+
+\begin{frame}[t]{Bringing gates to Life}{The AND gate}
+	\begin{columns}
+	\begin{column}{0.5\paperwidth}
+		\begin{itemize}
+			\item Collide both bitstreams in sequence
+			\item If both are \on, the \on from input $x$ consumes the gun glider leaving $y$ free to be output
+			\item If only one is \on, it will consume the gun glider leaving no gliders left as output
+			\item If both are \off, the gun glider keeps moving in the wrong direction, where it is tidied up by an eater
+		\end{itemize}
+	\end{column}
+
+	\begin{column}{0.5\paperwidth}
+		\begin{center}
+			\begin{tikzpicture}
+				\draw[->,thick] (-1.25,2) -- (-0.1,0.5) node[pos=-.2] {Glider gun};
+				\draw[->,thick] (2.75,2) -- (2.1,0.5) node[pos=-.2] {$x$};
+				\draw (0,0) rectangle (2, 1) node[pos=.5] {Collision};
+				\draw[->,thick] (1,-0.1) -- (1,-0.75);
+				\draw[->,thick] (2.75,0) -- (2.1,-1.5) node[pos=-.2] {$y$};
+				\draw (0,-0.9) rectangle (2, -2) node[pos=.5] {Collision};
+				\draw[->,thick] (1,-2.1) -- (1.4,-2.75);
+				\draw[dashed] (0.5,-2.9) rectangle (2.5, -4) node[pos=.5] {Eater};
+				\draw[<-,thick] (-1.25,-3) -- (-0.1,-1.5) node[pos=-.2] {$x$ AND $y$};
+			\end{tikzpicture}
+		\end{center}
+	\end{column}
+	\end{columns}
+\end{frame}
+
+\begin{frame}{Turing-completeness}
+	\begin{itemize}
+		\item We can embed any finite logic circuit in Life
+			\begin{itemize}
+				\item For example, a computer CPU
+			\end{itemize}
+		\item Can represent the transition function of a Turing machine in this way
+		\item A combination of gliders and still lifes can act as memory
+		\item With some machinery, we then have a full Turing machine
+	\end{itemize}
 \end{frame}
 
 \begin{frame}{Turing-completeness}
 	\begin{columns}
 		\begin{column}{0.3\paperwidth}
 		\begin{itemize}
-			\item Logic gate construction is equivalent to a Turing machine
-			\item However, Rendell (2002) built an `actual' Turing machine pattern in Life
+% http://rendell-attic.org/gol/tm.htm
+			\item Rendell (2000) built an `actual' Turing machine pattern in Life
 			\item Grid dimensions are 1,714~$\times$~1,647
+% http://rendell-attic.org/gol/utm/index.htm
+			\item Rendell later (2010) built a Universal Turing Machine
 		\end{itemize}
 	\end{column}
 
@@ -309,15 +346,17 @@
 	\end{columns}
 \end{frame}
 
+\begin{comment}
 \begin{frame}{Variations on a theme}
 	\begin{itemize}
 		\item Life is one of a family of games called `cellular automata'
 		\item There are a number of Life-like automata which change the number of neighbours required for a cell to live or die
-% http://arxiv.org/abs/1111.1567
-		\item Rafler (2011) formulated a continuous version of Life
 % http://www.complex-systems.com/pdf/15-1-1.pdf
 		\item Cook (2004) showed that even the 1-dimensional Rule 110 automaton is Turing-complete
+% http://arxiv.org/abs/1111.1567
+		\item Rafler (2011) formulated SmoothLife, a continuous version of Life
 	\end{itemize}
 \end{frame}
+\end{comment}
 
 \end{document}

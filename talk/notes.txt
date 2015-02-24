@@ -1,0 +1,387 @@
+PG  SLIDE
+1: 	1:		COMPUTATION IN THE GAME OF LIFE
+			So today I'm going to be talking to you about a particular game
+			called the game of Life, which is a game with very simple rules that
+			turns out to have some surprisingly powerful properties --- it will
+			turn out that in this game we can perform any computation we like.
+
+
+2:	2:		THE GAME OF LIFE / The rules
+			So Life is a bit of a different game to the ones you are used to
+			playing. For starters, it is a zero-player game. There are no
+			players who need to make a choice every turn. Once the board has
+			been set up, it only changes according to the specific rules of the
+			game.
+
+			The game board is also a little different; it is a bit like a
+			chessboard, except infinitely big in all directions. At any point,
+			every square is either alive or dead. We get to choose which are
+			alive and which are dead in any way we like at the start of the
+			game.
+
+			After that, the rules are in charge. Every turn, we look at each
+			square on the board and we count how many of its eight neighbours
+			are still alive. This will decide its fate.
+
+			If the square started the turn alive, then it only stays alive if it
+			has precisely 2 or 3 living neighbours. Too many and it dies of
+			overcrowding. Too few and it dies of isolation.
+
+			But every square gets a second chance: if a dead square has exactly
+			3 living neighbours, it sprouts back to life again.
+	
+
+3:	3:		THE GAME OF LIFE / An example
+			Let's look at some examples. You'll notice that the projector screen
+			here is only finite in size, so we're only looking at a small
+			portion of the board in each case. I've coloured in all the living
+			cells black, and left the dead ones white.
+
+			I chose the arrangements here pretty much at random. Let's see what
+			happens when we apply the rules.
+
+4:	3:		We can see that some cells have died, and other ones have been born.
+			It looks like the total number of living cells has gone up, though.
+
+5:	3:		But as we go on to the next turn, we see the opposite start to
+			happen. In the two left patterns, things are starting to die off. If
+			you remember the rule about dying in isolation, you'll notice that
+			things are looking pretty grim for these ones.
+
+6:	3:		Indeed, the middle pattern is gone already.
+
+7:	3:		Working through again, the left two have died out completely. But,
+			the pattern on the right seems to still be growing into some strange
+			shape.
+
+8:	3:		And there it looks like it'll keep on doing something interesting
+			for a while.
+
+
+9:	4:		THE GAME OF LIFE
+			The game of Life was invented primarily by the English mathematician
+			John Horton Conway, in 1970. The only reason anyone knows about it
+			is because he described it to Martin Gardner, an American writer who
+			had a column in the magazine _Scientific American_ called
+			`Mathematical Games'. Gardner devoted a column to it in the same
+			year; and apparently the offices at Scientific American received
+			more reader mail about that article than about any other since it
+			was founded!
+
+
+10:	5:		THE GAME OF LIFE
+			As we saw in the examples a couple of minutes ago, the rules of the
+			game are really quite simple. However, it turns out to be quite hard
+			to look at a given pattern and see if it'll quickly die out, or,
+			like the one on the right, keep going and turn into some strange
+			shape. And then, if it does keep going, what kind of behaviour does
+			it show?
+
+			We're going to start making sense of this by looking at some small
+			arrangements of cells which are stable, in that their behaviour is
+			completely predictable. Hopefully we're going to build up
+			combinations of these small stable patterns into something that can
+			do useful computation.
+
+
+11:	6:		SOME STABLE PATTERNS / Still lifes
+			One of the wonderful things about Life is that over the years,
+			as patterns have been discovered, they've all been given rather
+			colourful names. The simplest example of a stable pattern is what's
+			called a still life, because, if we go through a couple of turns ---
+
+12: 6:		--
+
+13:	6:		-- we see that it stays exactly the same. We say that these shapes
+			have period 1, because every 1 turn they return to their original
+			form.
+
+
+14:	7:		SOME STABLE PATTERNS / Blinkers
+			Here's a slightly more complicated example: this is called a
+			blinker. If we run it through,
+
+15: 7:		--
+
+16: 7:		--
+
+17: 7:		-- we see that it keeps cycling [gesticulate appropriately] between
+			a vertical and a horizontal line. We say it has period 2, because it
+			takes 2 turns for it to return back to its original shape.
+
+18: 8:		MORE COMPLEX BEHAVIOUR / Gliders
+			This is a very important pattern, and it does something a bit cooler
+			than the other two we've seen. This is called a glider. Moving it
+			through,
+
+19: 8:		--
+
+20: 8:		--
+
+21: 8:		--
+
+22: 8:		-- after 4 turns, its shape's the same, but it's moved one turn down
+			diagonally. If we keep going --
+
+23: 8:		--
+
+24: 8:		--
+
+25: 8:		--
+
+26: 8:		-- it's moved down another turn. Even though it moves, we still say
+			it has period 4.
+
+
+27: 9:		MORE COMPLEX BEHAVIOUR / Glider versus glider
+			Here's another fun fact about gliders. If we take two of them
+			travelling in opposite directions, and we line them up just right,
+			then watch: --
+
+28:	9:		--
+
+29:	9:		--
+
+30:	9:		--
+
+31:	9:		-- they've completely obliterated each other! This will come in
+			handy later on.
+
+
+32:	10:		MORE COMPLEX BEHAVIOUR / Eaters
+			One last example, which is still to do with gliders, is this still
+			life called an eater you can see here at the bottom. If we run
+			through a couple of turns --
+
+33:	10:		--
+
+34:	10:		-- we see that the eater stays exactly as it is. But watch as the
+			glider bangs into it --
+
+35:	10:		--
+
+36:	10:		--
+
+37:	10:		--
+
+38:	10:		-- the glider has just disappeared, and the eater is left unscathed.
+			These are really useful for hoovering up rubbish that floats around
+			the board.
+
+39:	11:		HOW COMPLEX CAN WE GO?
+			The natural next question, after seeing these small patterns, is to
+			ask, how complicated can we actually make the behaviour?
+
+			When he told Martin Gardner about the game in 1970, John Conway made
+			this conjecture: that there is no initial arrangement of the board
+			that grows infinitely. That is, eventually everything will either
+			die off or the number of living cells will level off --- say
+			everything becomes still lifes or some small oscillator. He put out
+			a cash prize of $50 to the first person who could prove or disprove
+			it.
+
+			It seems perfectly reasonable that it's true, given how simple the
+			rules are and how unpredictable the results of the game are. But it
+			turns out that the conjecture is completely false; it only took a
+			couple of months for a mathematician called Bill Gosper to find a
+			counterexample.
+
+
+40:	12:		HOW COMPLEX CAN WE GO? / Gosper's counterexample
+			This is the pattern he came up with, and it turns out to be
+			interesting not just in disproving this conjecture, but also for
+			building circuits like we will later on.
+
+			This is what's known as the `Gosper glider gun'. Let's move through
+			a few turns to see why. It takes a bit longer than the glider to do
+			anything, so I'm only going to show every 3 turns now --
+
+41:	12:		--
+
+42:	12:		--
+
+43:	12:		--
+
+44:	12:		--
+
+45:	12:		-- and look. Can you spot a familiar pattern in the middle there?
+			It's a glider. And luckily, if we play through a few more --
+
+46:	12:		--
+
+47:	12:		--
+
+48:	12:		--
+
+49:	12:		-- we see that the glider gets out the way of the rest of the shape
+			in time to escape. It'll just fly away there forever until it runs into
+			something else. If we finish going through its cycle --
+
+50:	12:		--
+
+51:	12:		--
+
+52:	12:		--
+
+52:	12:		--
+
+53:	12:		--
+
+54:	12:		--
+
+55:	12:		-- then after 30 turns, we find ourselves with exactly the same
+			shape as at the start, except these couple of gliders that are
+			highlighted in dazzling grey here. So every 30 turns, this will just
+			repeat and repeat, shooting out gliders. The gliders last forever.
+			So this disproves Conway's conjecture --- the number of living cells
+			will just keep going up and up.
+
+
+56:	13:		HOW COMPLEX CAN WE GO?
+			So we've shown that Life can sustain infinite growth. Given the
+			title, that's a bit suggestive. Let's look at the result that's
+			really the whole point of the talk --
+
+57:	13:		-- that Life is Turing-complete. That's to say, --
+
+58:	13:		if you give me any procedure or algorithm or function that anything
+			else can compute, whether that's a computer or a Turing machine or a
+			person --- then you can translate it into a board pattern in Life
+			that if you run it through, you'll get the answer.
+
+
+59:	14:		LOGIC GATES
+			I'm going to try and sketch a proof of this fact in the time I've
+			got left. What we're going to try and do is to build up some logic
+			gates in Life. That's really the hard part --- once we've got them,
+			we can do a certain amount of computation with them. Then with a bit
+			more machinery, you can get to Turing-completeness.
+
+60:	14:		The basic idea is that a Boolean function is just one which takes
+			in some number of bits, each of which can only be one of two things
+			--- 1 or 0, true or false, however you label them. A logic gate is
+			just a particular `building block' Boolean function, and it turns
+			out you can write down all Boolean functions as a combination of
+			these two on the board. They exist in real hardware too; the CPU in
+			your computer is built from billions of individual logic gates, for
+			example. That's how they compute.
+
+			The first one here is the NOT gate, which does what it says on the
+			tin to some extent. It just gives you the opposite of what you put
+			in --- if you give it a 1, it'll give you a 0. If you give it a 0,
+			you'll get a 1.
+
+			The AND gate also has a very descriptive name. It'll only give you a
+			1 out if you put in two 1s. If you've got just one or even no 1s,
+			then all you get out is a big fat 0.
+
+
+61:	15:		BRINGING GATES TO LIFE / Encoding input
+			The first step in making these in Life is to come up with a way of
+			talking about 1s and 0s, of getting our input into the game. We're
+			going to do it in quite a simple way: we'll write our bits as a
+			stream of those gliders we saw earlier. When we see a 1, we'll put a
+			glider in and move down a bit. When we see a 0, we'll just leave a
+			gap where it would go and move down the same amount.
+
+			You'll remember that each of these gliders is going to be moving
+			down the board at the same speed. In a way you can think of them as
+			being a little like electrons in an electric circuit --- when
+			there's a glider there, when there's current there, we have a 1.
+			When there's nothing there, when there's no current, we call that a
+			0.
+
+62:	16:		BRINGING GATES TO LIFE / The NOT gate
+			Now we know what we're manipulating, we can talk about how to
+			actually build these gates in Life. We're going to start with the
+			simpler of the two, the NOT gate.
+
+			It's got two bits to it: first, we have our input stream of bits
+			like we saw in the last slide. They're moving down the board like
+			this [gesticulate]. The clever bit is that then we're going to stick
+			a glider gun up here which is just going to keep shooting gliders
+			down here. We're going to line them up so that the stream of gliders
+			coming from our gun and the stream of gliders that make up our bits
+			actually collide in the middle here. It's a bit fiddly, but you can
+			do it.
+			
+			If you remember from before, when two gliders crash into each other,
+			they both disappear completely, without leaving anything behind. So
+			if we ever have a 1 coming in from the left here, it'll crash into
+			the glider from the gun, and disappear. So we're left with no glider
+			--- which we called a 0.
+
+			Likewise, if we don't have a glider, then the glider from the gun
+			can just keep on going uninhibited. It keeps going in the same
+			direction. So we get a 1 at the bottom.
+
+63:	17:		BRINGING GATES TO LIFE / The AND gate
+			Now we've covered the NOT gate, things get a tiny bit more
+			complicated with the AND gate. But not really, because we basically
+			take the same idea from the NOT gate, and glue two together. {This
+			is basically an application of de Morgan's law.} We still have a
+			glider gun up at the top here, and our first input stream up at the
+			top left, and we set them up to collide.
+
+			As you know, if we had a 1 there, we've got 0 after the collision.
+			If we had a 0, now we have a 1. Now we set this output to collide
+			with our second input stream. If we got a 0 out the collision, then
+			we're just left with whatever $y$ is here. If it's a 1, then it
+			carries on its merry way. So we get a 1 if it's both ones coming in.
+			If $y$'s a 0, then nothing mysteriously appears, so it stays a 0.
+			Just as we want.
+
+			If our first bit $x$ was 0, then we got a 1 out of the first
+			collision. If $y$ was 1 here, then the gliders would collide and
+			we'd get nothing out. So far so good.
+
+			But what if $y$ was 0? Then we didn't get any 1s in at all, so we
+			want the AND gate to give us 0 out. But if there's no 1 coming in
+			from $y$, then the glider from the gun doesn't collide with
+			anything, so it stays alive. But notice from the diagram that it's
+			actually going in the wrong direction! So since we're only looking
+			at this output bit on the right there, we don't actually see this
+			extra glider at all. So we get a 0 out.
+
+			For reasons of neatness, though, we'd probably not shoot out random
+			gliders all over the board. So we stick an eater in at the bottom
+			here to clean up any of those extra gliders we get if there are two
+			0s.
+
+
+64:	18:		TURING-COMPLTENESS
+			Phew. So that's us built both the logic gates we need.
+			Theoretically, we can now build any logical circuit we like in Life,
+			plug in some bits as input, run it through and get the answer. One
+			thing you can build as a logical circuit is binary arithmetic, for
+			example. In fact, your entire computer CPU is basically just a big,
+			fancy logical circuit. So anything your computer can calculate, we
+			can program Life to do now.
+
+			Strictly speaking, this isn't quite enough to show that Life is
+			Turing-complete, since it can't give us infinite memory. (You can
+			use things like flip-flop circuits to build finite memory though.)
+			But we can use it to encode the transition function for any Turing
+			machine we want to build. Then we use some intricate arrangements of
+			still lifes to represent symbols on our tape, and, say, fire gliders
+			at it to read and write from it. Since the board is infinite, we
+			have infinite space for our tape, and this is basically how you
+			build a fully-fledged Turing machine.
+
+
+65:	19:		TURING-COMPLETENESS
+			It so happens that a crazy person by the name of Paul Rendell
+			actually went out and built a functioning Turing machine pattern
+			entirely in Life. He finished his first version in 2000, and it's
+			shown here. It's huge --- the initial configuration is thousands of
+			cells wide and thousands of cells across.
+
+			A few years later he went even further and built a full universal
+			Turing machine, which can itself simulate any other Turing machine.
+			Which is certainly enough to show that Life itself is
+			Turing-complete. How he built this and so on was actually the topic
+			of his PhD thesis, which he finished this year and you can find
+			online if you're interested.
+
+--:	--:		Thank you for listening.
+

@@ -1,0 +1,32 @@
+#!/bin/bash
+# Usage: place CANVAS X Y PART
+# Places the part PART at position X, Y on the CANVAS
+set -e
+
+canvas="$1"
+x=$2
+y=$3
+part="$4"
+
+canvas_width="$(head -n 1 "$canvas" | wc -c)"
+part_width="$(head -n 1 "$canvas" | wc -c)"
+max_width=$((${canvas_width}<${part_width}?${part_width}:${canvas_width}))
+
+line=0
+paste -d'\n' "$canvas" "$part" | while read canvas_line; do
+	read part_line
+
+	for n in $(seq 0 $max_width); do
+		canvas_char=${canvas_line:$n:1}
+		part_char=${part_line:$(($n-$x)):1}
+
+		if [[ -z $canvas_char ]] || [[ "$canvas_char" == "." ]]; then
+			echo -n $part_char
+		else
+			echo -n $canvas_char
+		fi
+	done
+	echo
+
+	line=$(($line+1))
+done
